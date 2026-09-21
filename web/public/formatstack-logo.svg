@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="160" viewBox="0 0 640 160">
+  <g transform="translate(24,48)">
+    <g transform="scale(1.0625)">
+      <rect x="4" y="12" width="30" height="7" rx="3.5" fill="#c9a0e8" transform="rotate(-18 4 12)"/>
+      <rect x="4" y="26" width="30" height="7" rx="3.5" fill="#ab8adf" transform="rotate(-8 4 26)"/>
+      <rect x="4" y="40" width="30" height="7" rx="3.5" fill="#8c7ed6" transform="rotate(4 4 40)"/>
+      <rect x="8" y="52" width="48" height="9" rx="4.5" fill="#4a5fc4"/>
+    </g>
+  </g>
+  <text x="150" y="96" font-family="Manrope, Arial, sans-serif" font-weight="800" font-size="56" letter-spacing="-1">
+    <tspan fill="#2b2b30">Format</tspan><tspan fill="#4a5fc4">Stack</tspan>
+  </text>
+</svg>
