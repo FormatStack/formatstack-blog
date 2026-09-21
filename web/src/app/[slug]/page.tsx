@@ -112,10 +112,7 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
 
   return (
     <main id="main-content" className="article-page">
-      <Link
-        href="/"
-        className="article-back"
-      >
+      <Link href="/" className="article-back">
         <span aria-hidden="true">←</span> Back to the journal
       </Link>
 
@@ -131,7 +128,12 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
                 )}
               </time>
             ) : null}
-            {post.author?.name ? <><br /><span>By {post.author.name}</span></> : null}
+            {post.author?.name ? (
+              <>
+                <br />
+                <span>By {post.author.name}</span>
+              </>
+            ) : null}
           </div>
           <div className="article-title">
             <h1>{post.title}</h1>
@@ -158,13 +160,19 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
 
         {post.body?.length ? (
           <div className="article-body">
-            <PortableText value={post.body} components={portableTextComponents} />
+            <PortableText
+              value={post.body}
+              components={portableTextComponents}
+            />
           </div>
         ) : null}
       </article>
 
       {relatedPosts.length ? (
-        <section className="related-posts" aria-labelledby="related-posts-title">
+        <section
+          className="related-posts"
+          aria-labelledby="related-posts-title"
+        >
           <div className="related-posts__heading">
             <p>Keep reading</p>
             <h2 id="related-posts-title">

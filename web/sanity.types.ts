@@ -373,12 +373,28 @@ export type POST_QUERY_RESULT = {
   seo: Seo | null;
 } | null;
 
+// Source: ../web/src/sanity/lib/queries.ts
+// Variable: RELATED_POSTS_QUERY
+// Query: *[    _type == "post" &&    _id != $postId &&    defined(slug.current) &&    $categoryId in categories[]._ref  ] | order(publishedAt desc)[0...4] {    _id,    title,    "slug": slug.current,    mainImage {      asset,      alt,      crop,      hotspot    }  }
+export type RELATED_POSTS_QUERY_RESULT = Array<{
+  _id: string;
+  title: string;
+  slug: string;
+  mainImage: {
+    asset: SanityImageAssetReference | null;
+    alt: string;
+    crop: SanityImageCrop | null;
+    hotspot: SanityImageHotspot | null;
+  } | null;
+}>;
+
 // Query TypeMap
 declare global {
   interface SanityQueries {
     '\n  *[_type == "post" && defined(slug.current)] | order(publishedAt desc) {\n    _id,\n    title,\n    "slug": slug.current,\n    excerpt,\n    publishedAt,\n    mainImage {\n      asset,\n      alt,\n      crop,\n      hotspot\n    },\n    author->{name},\n    categories[]->{_id, title}\n  }\n': POSTS_QUERY_RESULT;
     '\n  *[_type == "post" && defined(slug.current)]{"slug": slug.current}\n': POST_SLUGS_QUERY_RESULT;
     '\n  *[_type == "post" && slug.current == $slug][0] {\n    _id,\n    title,\n    "slug": slug.current,\n    excerpt,\n    publishedAt,\n    mainImage {\n      asset,\n      alt,\n      crop,\n      hotspot\n    },\n    author->{name, "slug": slug.current, image},\n    categories[]->{_id, title, "slug": slug.current},\n    body[]{\n      ...,\n      _type == "image" => {\n        asset,\n        alt,\n        crop,\n        hotspot\n      }\n    },\n    seo\n  }\n': POST_QUERY_RESULT;
+    '\n  *[\n    _type == "post" &&\n    _id != $postId &&\n    defined(slug.current) &&\n    $categoryId in categories[]._ref\n  ] | order(publishedAt desc)[0...4] {\n    _id,\n    title,\n    "slug": slug.current,\n    mainImage {\n      asset,\n      alt,\n      crop,\n      hotspot\n    }\n  }\n': RELATED_POSTS_QUERY_RESULT;
   }
 }
 // Lets @sanity/client releases that predate the global registry read it too
