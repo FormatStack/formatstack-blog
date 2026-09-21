@@ -8,10 +8,21 @@ import type { SanityImageSource } from "@sanity/image-url";
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import { sanityFetch } from "@/sanity/lib/live";
-import { POST_QUERY, POST_SLUGS_QUERY } from "@/sanity/lib/queries";
+import {
+  POST_QUERY,
+  POST_SLUGS_QUERY,
+  RELATED_POSTS_QUERY,
+} from "@/sanity/lib/queries";
 
 type PortableImage = Extract<SanityImageSource, { asset: unknown }> & {
   alt?: string;
+};
+
+type RelatedPost = {
+  _id: string;
+  title: string;
+  slug: string;
+  mainImage?: PortableImage;
 };
 
 const portableTextComponents: PortableTextComponents = {
@@ -91,6 +102,14 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
 
   if (!post) notFound();
 
+  const primaryCategory = post.categories?.[0];
+  const relatedPosts: RelatedPost[] = primaryCategory
+    ? await sanityFetch({
+        query: RELATED_POSTS_QUERY,
+        params: { categoryId: primaryCategory._id, postId: post._id },
+      }).then(({ data }) => data as RelatedPost[])
+    : [];
+
   return (
     <main id="main-content" className="article-page">
       <Link
@@ -132,7 +151,7 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
             height={875}
             priority
             unoptimized
-            sizes="(max-width: 1320px) 100vw, 1280px"
+            sizes="(max-width: 1248px) 100vw, 1200px"
             className="article-hero"
           />
         ) : null}
@@ -143,6 +162,53 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
           </div>
         ) : null}
       </article>
+
+      {relatedPosts.length ? (
+        <section className="related-posts" aria-labelledby="related-posts-title">
+          <div className="related-posts__heading">
+            <p>Keep reading</p>
+            <h2 id="related-posts-title">
+              More in {primaryCategory?.title || "this category"}
+            </h2>
+          </div>
+          <div className="related-posts__grid">
+            {relatedPosts.map((relatedPost, index) => (
+              <article className="related-card" key={relatedPost._id}>
+                <Link
+                  href={`/${relatedPost.slug}`}
+                  className="related-card__image"
+                  aria-label={`Read ${relatedPost.title}`}
+                >
+                  {relatedPost.mainImage?.asset ? (
+                    <Image
+                      src={urlFor(relatedPost.mainImage)
+                        .width(800)
+                        .height(600)
+                        .auto("format")
+                        .url()}
+                      alt={relatedPost.mainImage.alt || ""}
+                      width={800}
+                      height={600}
+                      unoptimized
+                      sizes="(max-width: 680px) calc(100vw - 3rem), (max-width: 900px) 50vw, 25vw"
+                    />
+                  ) : (
+                    <span
+                      className={`story-placeholder story-placeholder--${(index % 3) + 1}`}
+                      aria-hidden="true"
+                    >
+                      <span>{String(index + 1).padStart(2, "0")}</span>
+                    </span>
+                  )}
+                </Link>
+                <h3>
+                  <Link href={`/${relatedPost.slug}`}>{relatedPost.title}</Link>
+                </h3>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
     </main>
   );
 }

@@ -49,3 +49,22 @@ export const POST_QUERY = defineQuery(`
     seo
   }
 `);
+
+export const RELATED_POSTS_QUERY = defineQuery(`
+  *[
+    _type == "post" &&
+    _id != $postId &&
+    defined(slug.current) &&
+    $categoryId in categories[]._ref
+  ] | order(publishedAt desc)[0...4] {
+    _id,
+    title,
+    "slug": slug.current,
+    mainImage {
+      asset,
+      alt,
+      crop,
+      hotspot
+    }
+  }
+`);

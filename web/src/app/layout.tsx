@@ -10,6 +10,7 @@ const plexMono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500"], var
 export const metadata: Metadata = {
   title: { default: "FormatStack Journal", template: "%s | FormatStack Journal" },
   description: "Field notes on document intelligence, structured data, and better workflows.",
+  icons: { icon: "/favicon.svg" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
