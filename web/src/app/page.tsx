@@ -34,6 +34,7 @@ export default async function Home() {
                   height={675}
                   unoptimized
                   className="aspect-video w-full object-cover"
+                  loading="eager"
                 />
               ) : null}
               <div className="p-6">
