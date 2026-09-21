@@ -154,7 +154,7 @@ export default async function Home({
                           width={800}
                           height={600}
                           unoptimized
-                          sizes="(max-width: 680px) calc(100vw - 2rem), (max-width: 1100px) 38vw, 300px"
+                          sizes="(max-width: 680px) calc(100vw - 2rem), (max-width: 900px) 45vw, (max-width: 1200px) 24vw, 270px"
                         />
                       ) : (
                         <span
