@@ -301,10 +301,84 @@ export type POSTS_QUERY_RESULT = Array<{
   }> | null;
 }>;
 
+// Source: ../web/src/sanity/lib/queries.ts
+// Variable: POST_SLUGS_QUERY
+// Query: *[_type == "post" && defined(slug.current)]{"slug": slug.current}
+export type POST_SLUGS_QUERY_RESULT = Array<{
+  slug: string;
+}>;
+
+// Source: ../web/src/sanity/lib/queries.ts
+// Variable: POST_QUERY
+// Query: *[_type == "post" && slug.current == $slug][0] {    _id,    title,    "slug": slug.current,    excerpt,    publishedAt,    mainImage {      asset,      alt,      crop,      hotspot    },    author->{name, "slug": slug.current, image},    categories[]->{_id, title, "slug": slug.current},    body[]{      ...,      _type == "image" => {        asset,        alt,        crop,        hotspot      }    },    seo  }
+export type POST_QUERY_RESULT = {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  publishedAt: string;
+  mainImage: {
+    asset: SanityImageAssetReference | null;
+    alt: string;
+    crop: SanityImageCrop | null;
+    hotspot: SanityImageHotspot | null;
+  } | null;
+  author: {
+    name: string;
+    slug: string;
+    image: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    } | null;
+  };
+  categories: Array<{
+    _id: string;
+    title: string;
+    slug: string;
+  }> | null;
+  body: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>;
+          text?: string;
+          _type: "span";
+          _key: string;
+        }>;
+        style?:
+          "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+        listItem?: "bullet" | "number";
+        markDefs?: Array<{
+          href?: string;
+          _type: "link";
+          _key: string;
+        }>;
+        level?: number;
+        _type: "block";
+        _key: string;
+      }
+    | {
+        asset: SanityImageAssetReference | null;
+        media?: unknown;
+        hotspot: SanityImageHotspot | null;
+        crop: SanityImageCrop | null;
+        alt: string | null;
+        _type: "image";
+        _key: string;
+      }
+  > | null;
+  seo: Seo | null;
+} | null;
+
 // Query TypeMap
 declare global {
   interface SanityQueries {
     '\n  *[_type == "post" && defined(slug.current)] | order(publishedAt desc) {\n    _id,\n    title,\n    "slug": slug.current,\n    excerpt,\n    publishedAt,\n    mainImage {\n      asset,\n      alt,\n      crop,\n      hotspot\n    },\n    author->{name},\n    categories[]->{_id, title}\n  }\n': POSTS_QUERY_RESULT;
+    '\n  *[_type == "post" && defined(slug.current)]{"slug": slug.current}\n': POST_SLUGS_QUERY_RESULT;
+    '\n  *[_type == "post" && slug.current == $slug][0] {\n    _id,\n    title,\n    "slug": slug.current,\n    excerpt,\n    publishedAt,\n    mainImage {\n      asset,\n      alt,\n      crop,\n      hotspot\n    },\n    author->{name, "slug": slug.current, image},\n    categories[]->{_id, title, "slug": slug.current},\n    body[]{\n      ...,\n      _type == "image" => {\n        asset,\n        alt,\n        crop,\n        hotspot\n      }\n    },\n    seo\n  }\n': POST_QUERY_RESULT;
   }
 }
 // Lets @sanity/client releases that predate the global registry read it too

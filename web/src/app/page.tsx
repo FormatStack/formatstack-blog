@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { urlFor } from "@/sanity/lib/image";
 import { sanityFetch } from "@/sanity/lib/live";
@@ -45,11 +46,19 @@ export default async function Home() {
                   {post.author?.name ? ` · ${post.author.name}` : null}
                 </p>
                 <h2 className="text-2xl font-semibold text-zinc-950">
-                  {post.title}
+                  <Link href={`/${post.slug}`} className="hover:underline">
+                    {post.title}
+                  </Link>
                 </h2>
                 {post.excerpt ? (
                   <p className="mt-3 leading-7 text-zinc-600">{post.excerpt}</p>
                 ) : null}
+                <Link
+                  href={`/${post.slug}`}
+                  className="mt-5 inline-block font-medium text-zinc-950 underline underline-offset-4"
+                >
+                  View article
+                </Link>
               </div>
             </article>
           ))}
