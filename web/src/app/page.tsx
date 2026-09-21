@@ -31,6 +31,7 @@ export default async function Home() {
                   alt={post.mainImage.alt || ""}
                   width={1200}
                   height={675}
+                  unoptimized
                   className="aspect-video w-full object-cover"
                 />
               ) : null}
