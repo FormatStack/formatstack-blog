@@ -128,7 +128,7 @@ export default async function Home({
             aria-labelledby="stories-title"
           >
             <div className="section-heading">
-              <p>02 / Dispatches</p>
+              <p>Browse articles</p>
               <h2 id="stories-title">{activeCategory || "Latest stories"}</h2>
               <span>
                 {String(filteredPosts.length).padStart(2, "0")} articles
