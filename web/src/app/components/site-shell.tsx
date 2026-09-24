@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export function BrandMark() {
   return (
-    <Link href="/" className="brand-mark" aria-label="FormatStack Journal home">
+    <Link href="/" className="brand-mark" aria-label="FormatStack Blog home">
       <Image src="/formatstack-logo.svg" alt="FormatStack" width={640} height={160} priority />
     </Link>
   );

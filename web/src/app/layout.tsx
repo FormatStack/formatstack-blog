@@ -8,7 +8,7 @@ const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", displa
 const plexMono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-plex-mono", display: "swap" });
 
 export const metadata: Metadata = {
-  title: { default: "FormatStack Journal", template: "%s | FormatStack Journal" },
+  title: { default: "FormatStack Blog", template: "%s | FormatStack Blog" },
   description: "Field notes on document intelligence, structured data, and better workflows.",
   icons: { icon: "/favicon.svg" },
 };

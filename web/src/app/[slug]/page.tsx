@@ -119,8 +119,6 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
       <article>
         <header className="article-header">
           <div className="article-kicker">
-            <span>{post.categories?.[0]?.title || "Field note"}</span>
-            <br />
             {post.publishedAt ? (
               <time dateTime={post.publishedAt}>
                 {new Intl.DateTimeFormat("en", { dateStyle: "long" }).format(
@@ -176,7 +174,7 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
           <div className="related-posts__heading">
             <p>Keep reading</p>
             <h2 id="related-posts-title">
-              More in {primaryCategory?.title || "this category"}
+              {primaryCategory?.title || "this category"}
             </h2>
           </div>
           <div className="related-posts__grid">

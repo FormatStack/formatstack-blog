@@ -39,20 +39,14 @@ export default async function Home({
         post.categories?.some((category) => category.title === activeCategory),
       )
     : posts;
-  const featuredPost = posts[0];
-  const storyPosts = activeCategory ? filteredPosts : posts.slice(1);
 
   return (
     <main id="main-content">
       <section className="journal-hero" aria-labelledby="journal-title">
-        <div className="journal-hero__eyebrow">
-          <span>For localization</span>
-          <span>and DTP teams</span>
-        </div>
         <h1 id="journal-title">
           The FormatStack
           <span>
-            Journal<span className="title-dot">.</span>
+            Blog<span className="title-dot">.</span>
           </span>
         </h1>
         <p className="journal-hero__intro">
@@ -61,82 +55,28 @@ export default async function Home({
         </p>
       </section>
 
-      {featuredPost ? (
+      {posts.length > 0 ? (
         <>
-          {!activeCategory ? (
-            <section
-              className="featured-story"
-              aria-labelledby="featured-title"
-            >
-              <Link
-                href={`/${featuredPost.slug}`}
-                className="featured-story__image"
-                aria-label={`Read ${featuredPost.title}`}
-              >
-                {featuredPost.mainImage?.asset ? (
-                  <Image
-                    src={urlFor(featuredPost.mainImage)
-                      .width(1600)
-                      .height(1000)
-                      .auto("format")
-                      .url()}
-                    alt={featuredPost.mainImage.alt || ""}
-                    width={1600}
-                    height={1000}
-                    unoptimized
-                    priority
-                    sizes="(max-width: 860px) 100vw, 64vw"
-                  />
-                ) : (
-                  <span className="story-placeholder" aria-hidden="true">
-                    <span>FS</span>
-                  </span>
-                )}
-              </Link>
-              <div className="featured-story__copy">
-                <p className="story-meta">
-                  <span>Featured</span>
-                  <time dateTime={featuredPost.publishedAt || undefined}>
-                    {formatDate(featuredPost.publishedAt)}
-                  </time>
-                </p>
-                <h2 id="featured-title">
-                  <Link href={`/${featuredPost.slug}`}>
-                    {featuredPost.title}
-                  </Link>
-                </h2>
-                {featuredPost.excerpt ? <p>{featuredPost.excerpt}</p> : null}
-                <div className="featured-story__footer">
-                  <span>
-                    {featuredPost.author?.name || "FormatStack Editorial"}
-                  </span>
-                  <Link
-                    className="round-link"
-                    href={`/${featuredPost.slug}`}
-                    aria-label={`Read ${featuredPost.title}`}
-                  >
-                    <span aria-hidden="true">↗</span>
-                  </Link>
-                </div>
-              </div>
-            </section>
-          ) : null}
-
           <section
             className="story-feed"
-            id="stories"
-            aria-labelledby="stories-title"
+            id="posts"
+            aria-labelledby="posts-title"
           >
             <div className="section-heading">
               <p>Browse articles</p>
-              <h2 id="stories-title">{activeCategory || "Latest stories"}</h2>
+              <h2
+                id="posts-title"
+                className={activeCategory ? undefined : "visually-hidden"}
+              >
+                {activeCategory || "All articles"}
+              </h2>
               <span>
                 {String(filteredPosts.length).padStart(2, "0")} articles
               </span>
             </div>
             <div className="story-layout">
               <div className="story-list">
-                {storyPosts.map((post, index) => (
+                {filteredPosts.map((post, index) => (
                   <article className="story-card" key={post._id}>
                     <Link
                       href={`/${post.slug}`}
@@ -154,6 +94,7 @@ export default async function Home({
                           width={800}
                           height={600}
                           unoptimized
+                          priority={index < 2}
                           sizes="(max-width: 680px) calc(100vw - 2rem), (max-width: 900px) 45vw, (max-width: 1200px) 24vw, 270px"
                         />
                       ) : (
@@ -161,7 +102,7 @@ export default async function Home({
                           className={`story-placeholder story-placeholder--${(index % 3) + 1}`}
                           aria-hidden="true"
                         >
-                          <span>{String(index + 2).padStart(2, "0")}</span>
+                          <span>{String(index + 1).padStart(2, "0")}</span>
                         </span>
                       )}
                     </Link>
@@ -185,14 +126,14 @@ export default async function Home({
                 id="categories"
                 aria-labelledby="categories-title"
               >
-                <p className="category-rail__label">Filter the journal</p>
+                <p className="category-rail__label">Filter the blog</p>
                 <h2 id="categories-title">Categories</h2>
                 <nav aria-label="Filter articles by category">
                   <ul>
                     <li>
                       <span>00</span>
                       <Link
-                        href="/#stories"
+                        href="/#posts"
                         aria-current={!activeCategory ? "page" : undefined}
                       >
                         All categories
@@ -202,7 +143,7 @@ export default async function Home({
                       <li key={category._id}>
                         <span>{String(index + 1).padStart(2, "0")}</span>
                         <Link
-                          href={`/?category=${encodeURIComponent(category.title)}#stories`}
+                          href={`/?category=${encodeURIComponent(category.title)}#posts`}
                           aria-current={
                             activeCategory === category.title
                               ? "page"
@@ -215,10 +156,6 @@ export default async function Home({
                     ))}
                   </ul>
                 </nav>
-                <div className="category-rail__note">
-                  <span aria-hidden="true">✦</span>
-                  <p>Built for teams that ship reviewed documents.</p>
-                </div>
               </aside>
             </div>
           </section>
@@ -226,8 +163,8 @@ export default async function Home({
       ) : (
         <section className="empty-state">
           <span>✦</span>
-          <h2>The journal is taking shape.</h2>
-          <p>The first FormatStack story will appear here soon.</p>
+          <h2>The blog is taking shape.</h2>
+          <p>The first FormatStack post will appear here soon.</p>
         </section>
       )}
     </main>
