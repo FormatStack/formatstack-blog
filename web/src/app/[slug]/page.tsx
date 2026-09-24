@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { PortableText, type PortableTextComponents } from "next-sanity";
 import type { SanityImageSource } from "@sanity/image-url";
 
+import { StoryPlaceholder } from "@/app/components/story-placeholder";
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import { sanityFetch } from "@/sanity/lib/live";
@@ -27,15 +28,32 @@ type RelatedPost = {
 
 const portableTextComponents: PortableTextComponents = {
   block: {
-    h2: ({ children }) => <h2>{children}</h2>,
-    h3: ({ children }) => <h3>{children}</h3>,
-    normal: ({ children }) => <p>{children}</p>,
-    blockquote: ({ children }) => <blockquote>{children}</blockquote>,
+    h2: ({ children }) => (
+      <h2 className="mt-14 mb-[1.2rem] text-[2.5rem] leading-[1.05] tracking-[-.045em]">
+        {children}
+      </h2>
+    ),
+    h3: ({ children }) => (
+      <h3 className="mt-[2.8rem] mb-4 text-[1.7rem] tracking-[-.035em]">
+        {children}
+      </h3>
+    ),
+    normal: ({ children }) => (
+      <p className="mb-6 leading-[1.85] text-[#454b55]">{children}</p>
+    ),
+    blockquote: ({ children }) => (
+      <blockquote className="my-12 border-l-4 border-blue bg-white px-8 py-[1.8rem] text-[1.25rem]">
+        {children}
+      </blockquote>
+    ),
   },
   list: {
-    bullet: ({ children }) => <ul>{children}</ul>,
-    number: ({ children }) => <ol>{children}</ol>,
+    bullet: ({ children }) => <ul className="mb-6 pl-[1.4rem]">{children}</ul>,
+    number: ({ children }) => <ol className="mb-6 pl-[1.4rem]">{children}</ol>,
   },
+  listItem: ({ children }) => (
+    <li className="leading-[1.85] text-[#454b55]">{children}</li>
+  ),
   marks: {
     link: ({ children, value }) => {
       const href = typeof value?.href === "string" ? value.href : "#";
@@ -44,6 +62,7 @@ const portableTextComponents: PortableTextComponents = {
       return (
         <a
           href={href}
+          className="text-blue underline underline-offset-3"
           target={external ? "_blank" : undefined}
           rel={external ? "noopener noreferrer" : undefined}
         >
@@ -65,6 +84,7 @@ const portableTextComponents: PortableTextComponents = {
           height={900}
           unoptimized
           sizes="(max-width: 800px) 100vw, 760px"
+          className="my-12 h-auto w-full"
         />
       );
     },
@@ -111,14 +131,20 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
     : [];
 
   return (
-    <main id="main-content" className="article-page">
-      <Link href="/" className="article-back">
+    <main
+      id="main-content"
+      className="mx-auto w-full max-w-300 px-6 pt-16 pb-32 max-phone:pt-10"
+    >
+      <Link
+        href="/"
+        className="inline-flex items-center gap-2 text-[.75rem] font-extrabold tracking-[.08em] text-muted uppercase hover:text-blue"
+      >
         <span aria-hidden="true">←</span> Back to the journal
       </Link>
 
       <article>
-        <header className="article-header">
-          <div className="article-kicker">
+        <header className="mx-auto mt-24 mb-12 grid max-w-190 gap-6 max-tablet:mt-16 max-phone:mt-14 max-phone:mb-10">
+          <div className="eyebrow leading-[1.8] text-blue">
             {post.publishedAt ? (
               <time dateTime={post.publishedAt}>
                 {new Intl.DateTimeFormat("en", { dateStyle: "long" }).format(
@@ -133,9 +159,15 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
               </>
             ) : null}
           </div>
-          <div className="article-title">
-            <h1>{post.title}</h1>
-            {post.excerpt ? <p>{post.excerpt}</p> : null}
+          <div>
+            <h1 className="text-[clamp(2rem,4.5vw,2.75rem)] leading-[1.1] tracking-[-.04em]">
+              {post.title}
+            </h1>
+            {post.excerpt ? (
+              <p className="mt-2.5 text-[1.2rem] leading-[1.65] text-muted">
+                {post.excerpt}
+              </p>
+            ) : null}
           </div>
         </header>
 
@@ -152,12 +184,12 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
             priority
             unoptimized
             sizes="(max-width: 1248px) 100vw, 1200px"
-            className="article-hero"
+            className="mx-auto block aspect-video w-full max-w-190 object-cover"
           />
         ) : null}
 
         {post.body?.length ? (
-          <div className="article-body">
+          <div className="mx-auto mt-20 max-w-190 text-[1.08rem] max-phone:mt-12">
             <PortableText
               value={post.body}
               components={portableTextComponents}
@@ -168,21 +200,24 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
 
       {relatedPosts.length ? (
         <section
-          className="related-posts"
+          className="mt-32 border-t border-ink pt-8 max-phone:mt-20"
           aria-labelledby="related-posts-title"
         >
-          <div className="related-posts__heading">
-            <p>Keep reading</p>
-            <h2 id="related-posts-title">
+          <div className="mb-10 flex items-end justify-between gap-8 max-phone:mb-7 max-phone:block">
+            <p className="eyebrow text-blue max-phone:mb-3">Keep reading</p>
+            <h2
+              id="related-posts-title"
+              className="text-[clamp(1rem,2vw,1.875rem)] leading-[.95] tracking-tighter"
+            >
               {primaryCategory?.title || "this category"}
             </h2>
           </div>
-          <div className="related-posts__grid">
+          <div className="grid grid-cols-4 gap-[clamp(1rem,2vw,2rem)] max-tablet:grid-cols-2 max-tablet:gap-x-6 max-tablet:gap-y-10 max-phone:grid-cols-1 max-phone:gap-9">
             {relatedPosts.map((relatedPost, index) => (
-              <article className="related-card" key={relatedPost._id}>
+              <article className="min-w-0" key={relatedPost._id}>
                 <Link
                   href={`/${relatedPost.slug}`}
-                  className="related-card__image"
+                  className="group block aspect-4/3 overflow-hidden rounded-xl bg-[#e5e2da] max-phone:aspect-3/2"
                   aria-label={`Read ${relatedPost.title}`}
                 >
                   {relatedPost.mainImage?.asset ? (
@@ -197,18 +232,19 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
                       height={600}
                       unoptimized
                       sizes="(max-width: 680px) calc(100vw - 3rem), (max-width: 900px) 50vw, 25vw"
+                      className="size-full object-cover transition-transform duration-600 ease-[cubic-bezier(.2,.7,.2,1)] group-hover:scale-[1.025]"
                     />
                   ) : (
-                    <span
-                      className={`story-placeholder story-placeholder--${(index % 3) + 1}`}
-                      aria-hidden="true"
-                    >
-                      <span>{String(index + 1).padStart(2, "0")}</span>
-                    </span>
+                    <StoryPlaceholder index={index} />
                   )}
                 </Link>
-                <h3>
-                  <Link href={`/${relatedPost.slug}`}>{relatedPost.title}</Link>
+                <h3 className="mt-[1.1rem] text-[clamp(1.15rem,1.7vw,1.55rem)] leading-[1.15] tracking-[-.035em] max-phone:text-[1.35rem]">
+                  <Link
+                    href={`/${relatedPost.slug}`}
+                    className="link-underline"
+                  >
+                    {relatedPost.title}
+                  </Link>
                 </h3>
               </article>
             ))}
