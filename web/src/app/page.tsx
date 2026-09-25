@@ -49,12 +49,12 @@ export default async function Home({
   return (
     <main id="main-content">
       <section
-        className="relative mx-auto grid min-h-132.5 w-full max-w-300 grid-cols-[1.5fr_.55fr] items-end gap-10 px-6 pt-28 pb-20 after:absolute after:top-8 after:-right-48 after:size-80 after:rounded-full after:border after:border-line max-tablet:min-h-120 max-tablet:grid-cols-1 max-tablet:gap-6 max-tablet:pt-20 max-phone:min-h-107.5 max-phone:pt-16 max-phone:pb-12"
+        className="relative mx-auto grid w-full max-w-300 grid-cols-[1.5fr_.55fr] items-end gap-10 px-6 pt-16 pb-10 after:absolute after:top-8 after:-right-48 after:size-80 after:rounded-full after:border after:border-line max-tablet:grid-cols-1 max-tablet:gap-6 max-tablet:pt-12 max-phone:pt-10 max-phone:pb-8"
         aria-labelledby="journal-title"
       >
         <h1
           id="journal-title"
-          className="text-[clamp(3rem,5.5vw,5.5rem)] leading-[.86] font-extrabold tracking-[-.075em] max-phone:text-[clamp(2.6rem,11vw,4rem)]"
+          className="text-[clamp(2.5rem,4.5vw,4rem)] leading-[.86] font-extrabold tracking-[-.075em] max-phone:text-[clamp(2.25rem,9vw,3rem)]"
         >
           The FormatStack
           <span className="block text-blue">
@@ -70,7 +70,7 @@ export default async function Home({
       {posts.length > 0 ? (
         <>
           <section
-            className="mx-auto w-full max-w-300 px-6 pt-28 pb-36 max-phone:pt-20 max-phone:pb-24"
+            className="mx-auto w-full max-w-300 px-6 pt-10 pb-36 max-phone:pt-8 max-phone:pb-24"
             id="posts"
             aria-labelledby="posts-title"
           >
