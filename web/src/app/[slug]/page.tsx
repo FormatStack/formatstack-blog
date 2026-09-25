@@ -139,11 +139,11 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
         href="/"
         className="inline-flex items-center gap-2 text-[.75rem] font-extrabold tracking-[.08em] text-muted uppercase hover:text-blue"
       >
-        <span aria-hidden="true">←</span> Back to the journal
+        <span aria-hidden="true">←</span> Back to the blog
       </Link>
 
       <article>
-        <header className="mx-auto mt-24 mb-12 grid max-w-190 gap-6 max-tablet:mt-16 max-phone:mt-14 max-phone:mb-10">
+        <header className="mx-auto mt-12 mb-12 grid max-w-190 gap-6 max-tablet:mt-16 max-phone:mt-14 max-phone:mb-10">
           <div className="eyebrow leading-[1.8] text-blue">
             {post.publishedAt ? (
               <time dateTime={post.publishedAt}>
@@ -160,11 +160,11 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
             ) : null}
           </div>
           <div>
-            <h1 className="text-[clamp(2rem,4.5vw,2.75rem)] leading-[1.1] tracking-[-.04em]">
+            <h1 className="text-[clamp(1.8rem,4vw,2.35rem)] leading-[1.1] tracking-[-.04em]">
               {post.title}
             </h1>
             {post.excerpt ? (
-              <p className="mt-2.5 text-[1.2rem] leading-[1.65] text-muted">
+              <p className="mt-2 text-[1rem] leading-[1.65] text-muted">
                 {post.excerpt}
               </p>
             ) : null}
@@ -178,7 +178,7 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
               .height(875)
               .auto("format")
               .url()}
-            alt={post.mainImage.alt || ""}
+            alt={post.mainImage.alt || post.title}
             width={1400}
             height={875}
             priority
@@ -189,7 +189,7 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
         ) : null}
 
         {post.body?.length ? (
-          <div className="mx-auto mt-20 max-w-190 text-[1.08rem] max-phone:mt-12">
+          <div className="mx-auto mt-12 max-w-190 max-phone:mt-12">
             <PortableText
               value={post.body}
               components={portableTextComponents}
@@ -200,7 +200,7 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
 
       {relatedPosts.length ? (
         <section
-          className="mt-32 border-t border-ink pt-8 max-phone:mt-20"
+          className="mt-16 border-t border-ink/30 pt-8 max-phone:mt-20"
           aria-labelledby="related-posts-title"
         >
           <div className="mb-10 flex items-end justify-between gap-8 max-phone:mb-7 max-phone:block">
@@ -238,7 +238,7 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
                     <StoryPlaceholder index={index} />
                   )}
                 </Link>
-                <h3 className="mt-[1.1rem] text-[clamp(1.15rem,1.7vw,1.55rem)] leading-[1.15] tracking-[-.035em] max-phone:text-[1.35rem]">
+                <h3 className="mt-[.65rem] mb-[.3rem] text-[clamp(1.1rem,1.6vw,1.35rem)] leading-[1.12] tracking-[-.035em] max-phone:mt-[.6rem] max-phone:text-[1.25rem]">
                   <Link
                     href={`/${relatedPost.slug}`}
                     className="link-underline"

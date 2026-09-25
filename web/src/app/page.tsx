@@ -76,7 +76,7 @@ export default async function Home({
           >
             <div className="grid grid-cols-[.55fr_1.45fr_.45fr] items-end gap-8 border-b border-ink pb-8 max-phone:grid-cols-[1fr_auto]">
               <p className="eyebrow text-muted max-phone:col-span-full">
-                Browse articles
+                Browse posts
               </p>
               <h2
                 id="posts-title"
@@ -86,10 +86,10 @@ export default async function Home({
                     : "sr-only"
                 }
               >
-                {activeCategory || "All articles"}
+                {activeCategory || "All posts"}
               </h2>
               <span className="eyebrow -col-start-2 text-right text-muted">
-                {String(filteredPosts.length).padStart(2, "0")} articles
+                {String(filteredPosts.length).padStart(2, "0")} posts
               </span>
             </div>
             <div className="mt-14 grid grid-cols-[minmax(0,1fr)_260px] items-start gap-[clamp(3rem,6vw,7rem)] max-tablet:grid-cols-1">
@@ -153,7 +153,7 @@ export default async function Home({
                 >
                   Categories
                 </h2>
-                <nav aria-label="Filter articles by category">
+                <nav aria-label="Filter posts by category">
                   <ul className="border-t border-line max-tablet:grid max-tablet:grid-cols-[repeat(2,1fr)] max-phone:grid-cols-[1fr]">
                     <li className={categoryItem}>
                       <span className={categoryIndex}>00</span>
