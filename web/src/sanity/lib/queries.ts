@@ -1,12 +1,17 @@
 import { defineQuery } from "next-sanity";
 
 export const POSTS_QUERY = defineQuery(`
-  *[_type == "post" && defined(slug.current)] | order(publishedAt desc) {
+  *[
+    _type == "post" &&
+    defined(slug.current) &&
+    defined(publishedAt) &&
+    publishedAt <= now()
+  ] | order(publishedAt desc) {
     _id,
-    title,
-    "slug": slug.current,
+    "title": coalesce(title, "Untitled"),
+    "slug": coalesce(slug.current, ""),
     excerpt,
-    publishedAt,
+    "publishedAt": coalesce(publishedAt, _createdAt),
     mainImage {
       asset,
       alt,
@@ -14,21 +19,32 @@ export const POSTS_QUERY = defineQuery(`
       hotspot
     },
     author->{name},
-    categories[]->{_id, title}
+    categories[]->{_id, "title": coalesce(title, "Uncategorized")}
   }
 `);
 
 export const POST_SLUGS_QUERY = defineQuery(`
-  *[_type == "post" && defined(slug.current)]{"slug": slug.current}
+  *[
+    _type == "post" &&
+    defined(slug.current) &&
+    defined(publishedAt) &&
+    publishedAt <= now()
+  ]{"slug": coalesce(slug.current, "")}
 `);
 
 export const POST_QUERY = defineQuery(`
-  *[_type == "post" && slug.current == $slug][0] {
+  *[
+    _type == "post" &&
+    slug.current == $slug &&
+    defined(publishedAt) &&
+    publishedAt <= now()
+  ][0] {
     _id,
-    title,
-    "slug": slug.current,
+    _updatedAt,
+    "title": coalesce(title, "Untitled"),
+    "slug": coalesce(slug.current, ""),
     excerpt,
-    publishedAt,
+    "publishedAt": coalesce(publishedAt, _createdAt),
     mainImage {
       asset,
       alt,
@@ -46,7 +62,12 @@ export const POST_QUERY = defineQuery(`
         hotspot
       }
     },
-    seo
+    seo {
+      title,
+      description,
+      image,
+      "noIndex": noIndex == true
+    }
   }
 `);
 
@@ -55,16 +76,32 @@ export const RELATED_POSTS_QUERY = defineQuery(`
     _type == "post" &&
     _id != $postId &&
     defined(slug.current) &&
+    defined(publishedAt) &&
+    publishedAt <= now() &&
+    seo.noIndex != true &&
     $categoryId in categories[]._ref
   ] | order(publishedAt desc)[0...4] {
     _id,
-    title,
-    "slug": slug.current,
+    "title": coalesce(title, "Untitled"),
+    "slug": coalesce(slug.current, ""),
     mainImage {
       asset,
       alt,
       crop,
       hotspot
     }
+  }
+`);
+
+export const SITEMAP_QUERY = defineQuery(`
+  *[
+    _type == "post" &&
+    defined(slug.current) &&
+    defined(publishedAt) &&
+    publishedAt <= now() &&
+    seo.noIndex != true
+  ] | order(publishedAt desc) {
+    "slug": coalesce(slug.current, ""),
+    _updatedAt
   }
 `);
