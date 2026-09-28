@@ -146,7 +146,6 @@ export default async function Home({
                 id="categories"
                 aria-labelledby="categories-title"
               >
-                <p className="eyebrow mb-[2.8rem] text-blue">Filter the blog</p>
                 <h2
                   id="categories-title"
                   className="mb-4 text-[2rem] tracking-[-.045em]"
