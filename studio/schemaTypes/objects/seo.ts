@@ -9,6 +9,7 @@ export const seo = defineType({
       name: 'title',
       title: 'SEO title',
       type: 'string',
+      description: 'Overrides the post title in search results and social previews.',
       validation: (rule) => rule.max(60),
     }),
     defineField({
@@ -23,6 +24,13 @@ export const seo = defineType({
       title: 'Social image',
       type: 'image',
       options: {hotspot: true},
+    }),
+    defineField({
+      name: 'noIndex',
+      title: 'Hide from search engines',
+      description: 'Excludes this post from search results and the XML sitemap.',
+      type: 'boolean',
+      initialValue: false,
     }),
   ],
 })

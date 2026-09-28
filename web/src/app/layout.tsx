@@ -3,6 +3,7 @@ import { IBM_Plex_Mono, Manrope } from "next/font/google";
 import "./globals.css";
 import { SanityLive } from "@/sanity/lib/live";
 import { SiteFooter, SiteHeader } from "@/app/components/site-shell";
+import { siteName, siteUrl } from "@/lib/site";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -17,9 +18,20 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: { default: "FormatStack Blog", template: "%s | FormatStack Blog" },
+  metadataBase: siteUrl,
+  title: { default: siteName, template: `%s | ${siteName}` },
   description:
     "Field notes on document intelligence, structured data, and better workflows.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName,
+    title: siteName,
+    description:
+      "Field notes on document intelligence, structured data, and better workflows.",
+  },
+  twitter: { card: "summary" },
   icons: { icon: "/favicon.svg" },
 };
 

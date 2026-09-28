@@ -6,6 +6,7 @@ import { PortableText, type PortableTextComponents } from "next-sanity";
 import type { SanityImageSource } from "@sanity/image-url";
 
 import { StoryPlaceholder } from "@/app/components/story-placeholder";
+import { absoluteUrl, brandedTitle, siteName } from "@/lib/site";
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import { sanityFetch } from "@/sanity/lib/live";
@@ -82,7 +83,6 @@ const portableTextComponents: PortableTextComponents = {
           alt={image.alt || ""}
           width={1400}
           height={900}
-          unoptimized
           sizes="(max-width: 800px) 100vw, 760px"
           className="my-12 h-auto w-full"
         />
@@ -107,9 +107,41 @@ export async function generateMetadata({
 
   if (!post) return {};
 
+  const title = post.seo?.title || post.title;
+  const description = post.seo?.description || post.excerpt || undefined;
+  const socialImage = post.seo?.image?.asset
+    ? urlFor(post.seo.image).width(1200).height(630).url()
+    : post.mainImage?.asset
+      ? urlFor(post.mainImage).width(1200).height(630).url()
+      : undefined;
+
   return {
-    title: post.seo?.title || post.title,
-    description: post.seo?.description || post.excerpt,
+    title: { absolute: brandedTitle(title) },
+    description,
+    alternates: { canonical: `/${post.slug}` },
+    authors: post.author?.name ? [{ name: post.author.name }] : undefined,
+    robots: post.seo?.noIndex
+      ? { index: false, follow: true }
+      : { index: true, follow: true },
+    openGraph: {
+      type: "article",
+      url: `/${post.slug}`,
+      siteName,
+      title: brandedTitle(title),
+      description,
+      publishedTime: post.publishedAt || undefined,
+      modifiedTime: post._updatedAt,
+      authors: post.author?.name ? [post.author.name] : undefined,
+      images: socialImage
+        ? [{ url: socialImage, width: 1200, height: 630, alt: post.title }]
+        : undefined,
+    },
+    twitter: {
+      card: socialImage ? "summary_large_image" : "summary",
+      title: brandedTitle(title),
+      description,
+      images: socialImage ? [socialImage] : undefined,
+    },
   };
 }
 
@@ -129,6 +161,31 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
         params: { categoryId: primaryCategory._id, postId: post._id },
       }).then(({ data }) => data as RelatedPost[])
     : [];
+  const articleImage = post.mainImage?.asset
+    ? urlFor(post.mainImage).width(1400).height(875).url()
+    : undefined;
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.seo?.description || post.excerpt || undefined,
+    image: articleImage ? [articleImage] : undefined,
+    datePublished: post.publishedAt,
+    dateModified: post._updatedAt,
+    mainEntityOfPage: absoluteUrl(`/${post.slug}`),
+    author: post.author?.name
+      ? { "@type": "Person", name: post.author.name }
+      : undefined,
+    publisher: {
+      "@type": "Organization",
+      name: "FormatStack",
+      url: "https://formatstack.com/",
+      logo: {
+        "@type": "ImageObject",
+        url: absoluteUrl("/formatstack-logo.svg"),
+      },
+    },
+  };
 
   return (
     <main
@@ -143,6 +200,12 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
       </Link>
 
       <article>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
+          }}
+        />
         <header className="mx-auto mt-12 mb-12 grid max-w-190 gap-6 max-tablet:mt-16 max-phone:mt-14 max-phone:mb-10">
           <div className="eyebrow leading-[1.8] text-blue">
             {post.publishedAt ? (
@@ -182,7 +245,6 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
             width={1400}
             height={875}
             priority
-            unoptimized
             sizes="(max-width: 1248px) 100vw, 1200px"
             className="mx-auto block aspect-video w-full max-w-190 object-cover"
           />
@@ -230,7 +292,6 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
                       alt={relatedPost.mainImage.alt || ""}
                       width={800}
                       height={600}
-                      unoptimized
                       sizes="(max-width: 680px) calc(100vw - 3rem), (max-width: 900px) 50vw, 25vw"
                       className="size-full object-cover transition-transform duration-600 ease-[cubic-bezier(.2,.7,.2,1)] group-hover:scale-[1.025]"
                     />

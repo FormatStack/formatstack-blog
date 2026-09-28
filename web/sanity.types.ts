@@ -33,6 +33,7 @@ export type Seo = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  noIndex?: boolean;
 };
 
 export type BlockContent = Array<
@@ -85,47 +86,47 @@ export type Post = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  title: string;
-  slug: Slug;
+  title?: string;
+  slug?: Slug;
   excerpt?: string;
   mainImage?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
-    alt: string;
+    alt?: string;
     _type: "image";
   };
-  author: AuthorReference;
+  author?: AuthorReference;
   categories?: Array<
     {
       _key: string;
     } & CategoryReference
   >;
-  publishedAt: string;
+  publishedAt?: string;
   body?: BlockContent;
   seo?: Seo;
 };
 
 export type SanityImageCrop = {
   _type: "sanity.imageCrop";
-  top: number;
-  bottom: number;
-  left: number;
-  right: number;
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
 };
 
 export type SanityImageHotspot = {
   _type: "sanity.imageHotspot";
-  x: number;
-  y: number;
-  height: number;
-  width: number;
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
 };
 
 export type Slug = {
   _type: "slug";
-  current: string;
+  current?: string;
   source?: string;
 };
 
@@ -135,8 +136,8 @@ export type Category = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  title: string;
-  slug: Slug;
+  title?: string;
+  slug?: Slug;
   description?: string;
 };
 
@@ -146,8 +147,8 @@ export type Author = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  name: string;
-  slug: Slug;
+  name?: string;
+  slug?: Slug;
   image?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -180,9 +181,9 @@ export type SanityImagePalette = {
 
 export type SanityImageDimensions = {
   _type: "sanity.imageDimensions";
-  height: number;
-  width: number;
-  aspectRatio: number;
+  height?: number;
+  width?: number;
+  aspectRatio?: number;
 };
 
 export type SanityImageMetadata = {
@@ -208,14 +209,14 @@ export type SanityFileAsset = {
   title?: string;
   description?: string;
   altText?: string;
-  sha1hash: string;
-  extension: string;
-  mimeType: string;
-  size: number;
-  assetId: string;
+  sha1hash?: string;
+  extension?: string;
+  mimeType?: string;
+  size?: number;
+  assetId?: string;
   uploadId?: string;
-  path: string;
-  url: string;
+  path?: string;
+  url?: string;
   source?: SanityAssetSourceData;
 };
 
@@ -237,14 +238,14 @@ export type SanityImageAsset = {
   title?: string;
   description?: string;
   altText?: string;
-  sha1hash: string;
-  extension: string;
-  mimeType: string;
-  size: number;
-  assetId: string;
+  sha1hash?: string;
+  extension?: string;
+  mimeType?: string;
+  size?: number;
+  assetId?: string;
   uploadId?: string;
-  path: string;
-  url: string;
+  path?: string;
+  url?: string;
   metadata?: SanityImageMetadata;
   source?: SanityAssetSourceData;
 };
@@ -279,53 +280,54 @@ export type AllSanitySchemaTypes =
 
 // Source: ../web/src/sanity/lib/queries.ts
 // Variable: POSTS_QUERY
-// Query: *[_type == "post" && defined(slug.current)] | order(publishedAt desc) {    _id,    title,    "slug": slug.current,    excerpt,    publishedAt,    mainImage {      asset,      alt,      crop,      hotspot    },    author->{name},    categories[]->{_id, title}  }
+// Query: *[    _type == "post" &&    defined(slug.current) &&    defined(publishedAt) &&    publishedAt <= now()  ] | order(publishedAt desc) {    _id,    "title": coalesce(title, "Untitled"),    "slug": coalesce(slug.current, ""),    excerpt,    "publishedAt": coalesce(publishedAt, _createdAt),    mainImage {      asset,      alt,      crop,      hotspot    },    author->{name},    categories[]->{_id, "title": coalesce(title, "Uncategorized")}  }
 export type POSTS_QUERY_RESULT = Array<{
   _id: string;
-  title: string;
-  slug: string;
+  title: string | "Untitled";
+  slug: string | "";
   excerpt: string | null;
   publishedAt: string;
   mainImage: {
     asset: SanityImageAssetReference | null;
-    alt: string;
+    alt: string | null;
     crop: SanityImageCrop | null;
     hotspot: SanityImageHotspot | null;
   } | null;
   author: {
-    name: string;
-  };
+    name: string | null;
+  } | null;
   categories: Array<{
     _id: string;
-    title: string;
+    title: string | "Uncategorized";
   }> | null;
 }>;
 
 // Source: ../web/src/sanity/lib/queries.ts
 // Variable: POST_SLUGS_QUERY
-// Query: *[_type == "post" && defined(slug.current)]{"slug": slug.current}
+// Query: *[    _type == "post" &&    defined(slug.current) &&    defined(publishedAt) &&    publishedAt <= now()  ]{"slug": coalesce(slug.current, "")}
 export type POST_SLUGS_QUERY_RESULT = Array<{
-  slug: string;
+  slug: string | "";
 }>;
 
 // Source: ../web/src/sanity/lib/queries.ts
 // Variable: POST_QUERY
-// Query: *[_type == "post" && slug.current == $slug][0] {    _id,    title,    "slug": slug.current,    excerpt,    publishedAt,    mainImage {      asset,      alt,      crop,      hotspot    },    author->{name, "slug": slug.current, image},    categories[]->{_id, title, "slug": slug.current},    body[]{      ...,      _type == "image" => {        asset,        alt,        crop,        hotspot      }    },    seo  }
+// Query: *[    _type == "post" &&    slug.current == $slug &&    defined(publishedAt) &&    publishedAt <= now()  ][0] {    _id,    _updatedAt,    "title": coalesce(title, "Untitled"),    "slug": coalesce(slug.current, ""),    excerpt,    "publishedAt": coalesce(publishedAt, _createdAt),    mainImage {      asset,      alt,      crop,      hotspot    },    author->{name, "slug": slug.current, image},    categories[]->{_id, title, "slug": slug.current},    body[]{      ...,      _type == "image" => {        asset,        alt,        crop,        hotspot      }    },    seo {      title,      description,      image,      "noIndex": noIndex == true    }  }
 export type POST_QUERY_RESULT = {
   _id: string;
-  title: string;
-  slug: string;
+  _updatedAt: string;
+  title: string | "Untitled";
+  slug: string | "";
   excerpt: string | null;
   publishedAt: string;
   mainImage: {
     asset: SanityImageAssetReference | null;
-    alt: string;
+    alt: string | null;
     crop: SanityImageCrop | null;
     hotspot: SanityImageHotspot | null;
   } | null;
   author: {
-    name: string;
-    slug: string;
+    name: string | null;
+    slug: string | null;
     image: {
       asset?: SanityImageAssetReference;
       media?: unknown;
@@ -334,11 +336,11 @@ export type POST_QUERY_RESULT = {
       alt?: string;
       _type: "image";
     } | null;
-  };
+  } | null;
   categories: Array<{
     _id: string;
-    title: string;
-    slug: string;
+    title: string | null;
+    slug: string | null;
   }> | null;
   body: Array<
     | {
@@ -370,31 +372,51 @@ export type POST_QUERY_RESULT = {
         _key: string;
       }
   > | null;
-  seo: Seo | null;
+  seo: {
+    title: string | null;
+    description: string | null;
+    image: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    } | null;
+    noIndex: boolean | false;
+  } | null;
 } | null;
 
 // Source: ../web/src/sanity/lib/queries.ts
 // Variable: RELATED_POSTS_QUERY
-// Query: *[    _type == "post" &&    _id != $postId &&    defined(slug.current) &&    $categoryId in categories[]._ref  ] | order(publishedAt desc)[0...4] {    _id,    title,    "slug": slug.current,    mainImage {      asset,      alt,      crop,      hotspot    }  }
+// Query: *[    _type == "post" &&    _id != $postId &&    defined(slug.current) &&    defined(publishedAt) &&    publishedAt <= now() &&    seo.noIndex != true &&    $categoryId in categories[]._ref  ] | order(publishedAt desc)[0...4] {    _id,    "title": coalesce(title, "Untitled"),    "slug": coalesce(slug.current, ""),    mainImage {      asset,      alt,      crop,      hotspot    }  }
 export type RELATED_POSTS_QUERY_RESULT = Array<{
   _id: string;
-  title: string;
-  slug: string;
+  title: string | "Untitled";
+  slug: string | "";
   mainImage: {
     asset: SanityImageAssetReference | null;
-    alt: string;
+    alt: string | null;
     crop: SanityImageCrop | null;
     hotspot: SanityImageHotspot | null;
   } | null;
 }>;
 
+// Source: ../web/src/sanity/lib/queries.ts
+// Variable: SITEMAP_QUERY
+// Query: *[    _type == "post" &&    defined(slug.current) &&    defined(publishedAt) &&    publishedAt <= now() &&    seo.noIndex != true  ] | order(publishedAt desc) {    "slug": coalesce(slug.current, ""),    _updatedAt  }
+export type SITEMAP_QUERY_RESULT = Array<{
+  slug: string | "";
+  _updatedAt: string;
+}>;
+
 // Query TypeMap
 declare global {
   interface SanityQueries {
-    '\n  *[_type == "post" && defined(slug.current)] | order(publishedAt desc) {\n    _id,\n    title,\n    "slug": slug.current,\n    excerpt,\n    publishedAt,\n    mainImage {\n      asset,\n      alt,\n      crop,\n      hotspot\n    },\n    author->{name},\n    categories[]->{_id, title}\n  }\n': POSTS_QUERY_RESULT;
-    '\n  *[_type == "post" && defined(slug.current)]{"slug": slug.current}\n': POST_SLUGS_QUERY_RESULT;
-    '\n  *[_type == "post" && slug.current == $slug][0] {\n    _id,\n    title,\n    "slug": slug.current,\n    excerpt,\n    publishedAt,\n    mainImage {\n      asset,\n      alt,\n      crop,\n      hotspot\n    },\n    author->{name, "slug": slug.current, image},\n    categories[]->{_id, title, "slug": slug.current},\n    body[]{\n      ...,\n      _type == "image" => {\n        asset,\n        alt,\n        crop,\n        hotspot\n      }\n    },\n    seo\n  }\n': POST_QUERY_RESULT;
-    '\n  *[\n    _type == "post" &&\n    _id != $postId &&\n    defined(slug.current) &&\n    $categoryId in categories[]._ref\n  ] | order(publishedAt desc)[0...4] {\n    _id,\n    title,\n    "slug": slug.current,\n    mainImage {\n      asset,\n      alt,\n      crop,\n      hotspot\n    }\n  }\n': RELATED_POSTS_QUERY_RESULT;
+    '\n  *[\n    _type == "post" &&\n    defined(slug.current) &&\n    defined(publishedAt) &&\n    publishedAt <= now()\n  ] | order(publishedAt desc) {\n    _id,\n    "title": coalesce(title, "Untitled"),\n    "slug": coalesce(slug.current, ""),\n    excerpt,\n    "publishedAt": coalesce(publishedAt, _createdAt),\n    mainImage {\n      asset,\n      alt,\n      crop,\n      hotspot\n    },\n    author->{name},\n    categories[]->{_id, "title": coalesce(title, "Uncategorized")}\n  }\n': POSTS_QUERY_RESULT;
+    '\n  *[\n    _type == "post" &&\n    defined(slug.current) &&\n    defined(publishedAt) &&\n    publishedAt <= now()\n  ]{"slug": coalesce(slug.current, "")}\n': POST_SLUGS_QUERY_RESULT;
+    '\n  *[\n    _type == "post" &&\n    slug.current == $slug &&\n    defined(publishedAt) &&\n    publishedAt <= now()\n  ][0] {\n    _id,\n    _updatedAt,\n    "title": coalesce(title, "Untitled"),\n    "slug": coalesce(slug.current, ""),\n    excerpt,\n    "publishedAt": coalesce(publishedAt, _createdAt),\n    mainImage {\n      asset,\n      alt,\n      crop,\n      hotspot\n    },\n    author->{name, "slug": slug.current, image},\n    categories[]->{_id, title, "slug": slug.current},\n    body[]{\n      ...,\n      _type == "image" => {\n        asset,\n        alt,\n        crop,\n        hotspot\n      }\n    },\n    seo {\n      title,\n      description,\n      image,\n      "noIndex": noIndex == true\n    }\n  }\n': POST_QUERY_RESULT;
+    '\n  *[\n    _type == "post" &&\n    _id != $postId &&\n    defined(slug.current) &&\n    defined(publishedAt) &&\n    publishedAt <= now() &&\n    seo.noIndex != true &&\n    $categoryId in categories[]._ref\n  ] | order(publishedAt desc)[0...4] {\n    _id,\n    "title": coalesce(title, "Untitled"),\n    "slug": coalesce(slug.current, ""),\n    mainImage {\n      asset,\n      alt,\n      crop,\n      hotspot\n    }\n  }\n': RELATED_POSTS_QUERY_RESULT;
+    '\n  *[\n    _type == "post" &&\n    defined(slug.current) &&\n    defined(publishedAt) &&\n    publishedAt <= now() &&\n    seo.noIndex != true\n  ] | order(publishedAt desc) {\n    "slug": coalesce(slug.current, ""),\n    _updatedAt\n  }\n': SITEMAP_QUERY_RESULT;
   }
 }
 // Lets @sanity/client releases that predate the global registry read it too

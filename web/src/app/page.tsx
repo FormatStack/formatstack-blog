@@ -111,7 +111,6 @@ export default async function Home({
                           alt={post.mainImage.alt || ""}
                           width={800}
                           height={600}
-                          unoptimized
                           priority={index < 2}
                           className="size-full object-cover transition-transform duration-600 ease-[cubic-bezier(.2,.7,.2,1)] group-hover:scale-[1.025]"
                           sizes="(max-width: 680px) calc(100vw - 2rem), (max-width: 900px) 45vw, (max-width: 1200px) 24vw, 270px"
@@ -146,7 +145,6 @@ export default async function Home({
                 id="categories"
                 aria-labelledby="categories-title"
               >
-                <p className="eyebrow mb-[2.8rem] text-blue">Filter the blog</p>
                 <h2
                   id="categories-title"
                   className="mb-4 text-[2rem] tracking-[-.045em]"
