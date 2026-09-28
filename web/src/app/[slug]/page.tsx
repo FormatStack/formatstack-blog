@@ -83,7 +83,6 @@ const portableTextComponents: PortableTextComponents = {
           alt={image.alt || ""}
           width={1400}
           height={900}
-          unoptimized
           sizes="(max-width: 800px) 100vw, 760px"
           className="my-12 h-auto w-full"
         />
@@ -246,7 +245,6 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
             width={1400}
             height={875}
             priority
-            unoptimized
             sizes="(max-width: 1248px) 100vw, 1200px"
             className="mx-auto block aspect-video w-full max-w-190 object-cover"
           />
@@ -294,7 +292,6 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
                       alt={relatedPost.mainImage.alt || ""}
                       width={800}
                       height={600}
-                      unoptimized
                       sizes="(max-width: 680px) calc(100vw - 3rem), (max-width: 900px) 50vw, 25vw"
                       className="size-full object-cover transition-transform duration-600 ease-[cubic-bezier(.2,.7,.2,1)] group-hover:scale-[1.025]"
                     />
