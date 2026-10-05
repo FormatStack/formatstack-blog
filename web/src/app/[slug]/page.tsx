@@ -13,6 +13,7 @@ import { sanityFetch } from "@/sanity/lib/live";
 import {
   POST_QUERY,
   POST_SLUGS_QUERY,
+  POSTS_CACHE_TAG,
   RELATED_POSTS_QUERY,
 } from "@/sanity/lib/queries";
 
@@ -103,6 +104,7 @@ export async function generateMetadata({
     query: POST_QUERY,
     params: { slug },
     stega: false,
+    tags: [POSTS_CACHE_TAG],
   });
 
   if (!post) return {};
@@ -150,6 +152,7 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
   const { data: post } = await sanityFetch({
     query: POST_QUERY,
     params: { slug },
+    tags: [POSTS_CACHE_TAG],
   });
 
   if (!post) notFound();
@@ -159,6 +162,7 @@ export default async function PostPage({ params }: PageProps<"/[slug]">) {
     ? await sanityFetch({
         query: RELATED_POSTS_QUERY,
         params: { categoryId: primaryCategory._id, postId: post._id },
+        tags: [POSTS_CACHE_TAG],
       }).then(({ data }) => data as RelatedPost[])
     : [];
   const articleImage = post.mainImage?.asset

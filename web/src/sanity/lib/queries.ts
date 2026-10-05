@@ -1,5 +1,9 @@
 import { defineQuery } from "next-sanity";
 
+// Cache tag on every post query, expired by the Sanity webhook in
+// app/api/revalidate so new posts appear without waiting on <SanityLive />.
+export const POSTS_CACHE_TAG = "posts";
+
 export const POSTS_QUERY = defineQuery(`
   *[
     _type == "post" &&
