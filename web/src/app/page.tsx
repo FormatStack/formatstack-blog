@@ -4,7 +4,7 @@ import Link from "next/link";
 import { StoryPlaceholder } from "@/app/components/story-placeholder";
 import { urlFor } from "@/sanity/lib/image";
 import { sanityFetch } from "@/sanity/lib/live";
-import { POSTS_QUERY } from "@/sanity/lib/queries";
+import { POSTS_CACHE_TAG, POSTS_QUERY } from "@/sanity/lib/queries";
 
 const categoryItem = "flex gap-4 border-b border-line text-[.86rem] font-bold";
 const categoryIndex = "pt-[1.08rem] text-[.62rem] text-[#9aa0a9]";
@@ -25,7 +25,10 @@ export default async function Home({
 }: {
   searchParams: Promise<{ category?: string | string[] }>;
 }) {
-  const { data: posts } = await sanityFetch({ query: POSTS_QUERY });
+  const { data: posts } = await sanityFetch({
+    query: POSTS_QUERY,
+    tags: [POSTS_CACHE_TAG],
+  });
   const categories = Array.from(
     new Map(
       posts

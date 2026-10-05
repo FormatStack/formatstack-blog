@@ -2,10 +2,12 @@ import type { MetadataRoute } from "next";
 
 import { absoluteUrl } from "@/lib/site";
 import { client } from "@/sanity/lib/client";
-import { SITEMAP_QUERY } from "@/sanity/lib/queries";
+import { POSTS_CACHE_TAG, SITEMAP_QUERY } from "@/sanity/lib/queries";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const posts = await client.fetch(SITEMAP_QUERY, {}, { next: { revalidate: 3600 } });
+  const posts = await client.fetch(SITEMAP_QUERY, {}, {
+    next: { revalidate: 3600, tags: [POSTS_CACHE_TAG] },
+  });
 
   return [
     {
