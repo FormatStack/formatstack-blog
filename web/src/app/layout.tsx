@@ -33,6 +33,9 @@ export const metadata: Metadata = {
   },
   twitter: { card: "summary" },
   icons: { icon: "/favicon.svg" },
+  verification: {
+    other: { "msvalidate.01": "AFDFAC705D0EB18C08ADF80F69371588" },
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
