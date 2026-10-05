@@ -5,8 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "node scripts/submit-indexnow.mjs",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:indexnow": "node --test scripts/submit-indexnow.test.mjs"
   },
   "dependencies": {
     "@portabletext/react": "^8.0.1",
